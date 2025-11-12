@@ -2,10 +2,9 @@ import React, { createContext, useContext, useState, useEffect, useCallback, Rea
 import axios from 'axios';
 
 // Configure axios base URL
-const API_URL = process.env.REACT_APP_API_URL || '';
-if (API_URL) {
-  axios.defaults.baseURL = API_URL;
-}
+// Default to Railway backend URL, can be overridden with REACT_APP_API_URL environment variable
+const API_URL = process.env.REACT_APP_API_URL || 'https://elltysecondtest-production.up.railway.app';
+axios.defaults.baseURL = API_URL;
 
 interface User {
   id: string;
