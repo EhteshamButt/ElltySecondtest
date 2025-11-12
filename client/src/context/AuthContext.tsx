@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import axios from 'axios';
 
 // Configure axios base URL
@@ -35,6 +35,28 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
+  const logout = () => {
+    setUser(null);
+    setAccessToken(null);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    delete axios.defaults.headers.common['Authorization'];
+  };
+
+  const refreshAccessToken = useCallback(async (refreshToken: string) => {
+    try {
+      const response = await axios.post('/api/auth/refresh', { refreshToken });
+      const newAccessToken = response.data.accessToken;
+      setAccessToken(newAccessToken);
+      localStorage.setItem('accessToken', newAccessToken);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+    } catch (error) {
+      // Refresh failed, clear everything
+      logout();
+    }
+  }, []);
+
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
@@ -52,20 +74,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (refreshToken && !token) {
       refreshAccessToken(refreshToken);
     }
-  }, []);
-
-  const refreshAccessToken = async (refreshToken: string) => {
-    try {
-      const response = await axios.post('/api/auth/refresh', { refreshToken });
-      const newAccessToken = response.data.accessToken;
-      setAccessToken(newAccessToken);
-      localStorage.setItem('accessToken', newAccessToken);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
-    } catch (error) {
-      // Refresh failed, clear everything
-      logout();
-    }
-  };
+  }, [refreshAccessToken]);
 
   const login = async (username: string, password: string) => {
     const response = await axios.post('/api/auth/login', { username, password });
@@ -89,15 +98,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.setItem('refreshToken', refreshToken);
     localStorage.setItem('user', JSON.stringify(user));
     axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-  };
-
-  const logout = () => {
-    setUser(null);
-    setAccessToken(null);
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
-    delete axios.defaults.headers.common['Authorization'];
   };
 
   return (
