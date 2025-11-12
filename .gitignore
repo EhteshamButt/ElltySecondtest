@@ -31,4 +31,8 @@ yarn-error.log*
 # Environment variables
 .env
 server/.env
+client/.env
 
+# Build outputs
+server/dist
+client/build

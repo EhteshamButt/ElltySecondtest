@@ -157,11 +157,14 @@ router.post('/', authenticateToken, async (req: AuthRequest, res) => {
             username: true,
           },
         },
-        operations: [],
       },
     });
 
-    res.status(201).json(discussion);
+    // Add empty operations array for consistency with frontend
+    res.status(201).json({
+      ...discussion,
+      operations: [],
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors });

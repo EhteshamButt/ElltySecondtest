@@ -1,0 +1,25 @@
+services:
+  # Backend API
+  - type: web
+    name: number-discussion-api
+    env: node
+    plan: free
+    buildCommand: cd server && npm install && npm run build && npm run prisma:generate
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    healthCheckPath: /api/health
+
+  # Frontend
+  - type: web
+    name: number-discussion-frontend
+    env: static
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: client/build
+    envVars:
+      - key: REACT_APP_API_URL
+        sync: false
+
