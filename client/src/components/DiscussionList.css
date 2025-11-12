@@ -1,0 +1,44 @@
+.discussion-list {
+  padding: 1rem 0;
+}
+
+.discussion-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.discussion-list-header h1 {
+  color: #333;
+}
+
+.discussions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  background: white;
+  border-radius: 8px;
+}
+
+.error-message {
+  background-color: #fee;
+  color: #c33;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border: 1px solid #fcc;
+}
+
